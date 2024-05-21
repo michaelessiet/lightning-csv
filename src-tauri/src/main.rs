@@ -86,14 +86,13 @@ fn read_csv(start: i32, end: i32) -> Value {
     // filter data
     let data = json["data"].as_array_mut().unwrap();
     let mut new_data = Vec::new();
-    for i in start..end {
+    for i in start..std::cmp::min(end, data.len() as i32) {
         new_data.push(clone::Clone::clone(&data[i as usize]));
     }
 
     json["data"] = Value::Array(new_data);
 
-    json
-    // json
+    return json;
 }
 
 fn main() {

@@ -1,6 +1,7 @@
 import { For, createSignal } from "solid-js"
 import { invoke } from "@tauri-apps/api/tauri"
 import { createStore } from "solid-js/store"
+import { A } from "@solidjs/router"
 
 function Home() {
   const [greetMsg, setGreetMsg] = createSignal("")
@@ -12,17 +13,18 @@ function Home() {
     console.log("hello")
   }
 
-  async function printCSV() {
-    const csvData = await invoke("read_csv", { start: 0, end: 1000 })
-    setCSV(csvData)
-  }
+  // async function printCSV() {
+  //   const csvData = await invoke("read_csv", { start: 0, end: 1000 })
+  //   setCSV(csvData)
+  // }
 
   return (
     <div class="container">
       <button onClick={greet}>greet</button>
-      <button onClick={printCSV}>Print CSV</button>
+      {/* <button onClick={printCSV}>Print CSV</button> */}
+      <A href="/sheet">Open CSV</A>
       {/* <p>{JSON.stringify(csv(), null, 2)}</p> */}
-      <table>
+      {/* <table>
         <thead>
           <tr>
             <For each={csv.headers}>{(header) => <th>{header}</th>}</For>
@@ -37,7 +39,7 @@ function Home() {
             )}
           </For>
         </tbody>
-      </table>
+      </table> */}
     </div>
   )
 }

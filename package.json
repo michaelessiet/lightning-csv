@@ -9,23 +9,15 @@
     "build": "vite build",
     "serve": "vite preview",
     "tauri": "tauri",
-    "app": "tauri dev"
+    "app": "tauri dev",
+    "build:full": "tauri build"
   },
   "license": "MIT",
   "dependencies": {
     "@solidjs/router": "^0.13.3",
     "@tauri-apps/api": "^1",
-    "@univerjs/core": "^0.1.11",
-    "@univerjs/design": "^0.1.11",
-    "@univerjs/docs": "^0.1.11",
-    "@univerjs/docs-ui": "^0.1.11",
-    "@univerjs/engine-formula": "^0.1.11",
-    "@univerjs/engine-render": "^0.1.11",
-    "@univerjs/facade": "^0.1.11",
-    "@univerjs/sheets": "^0.1.11",
-    "@univerjs/sheets-formula": "^0.1.11",
-    "@univerjs/sheets-ui": "^0.1.11",
-    "@univerjs/ui": "^0.1.11",
+    "handsontable": "^14.3.0",
+    "hyperformula": "^2.7.0",
     "solid-js": "^1.7.8"
   },
   "devDependencies": {
