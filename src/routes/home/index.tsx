@@ -1,10 +1,8 @@
 import { For, createSignal } from "solid-js"
-import logo from "./assets/logo.svg"
 import { invoke } from "@tauri-apps/api/tauri"
-import "./App.css"
 import { createStore } from "solid-js/store"
 
-function App() {
+function Home() {
   const [greetMsg, setGreetMsg] = createSignal("")
   const [name, setName] = createSignal("")
   const [csv, setCSV] = createStore({})
@@ -44,4 +42,4 @@ function App() {
   )
 }
 
-export default App
+export default Home
