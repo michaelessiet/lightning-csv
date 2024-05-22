@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri"
-import { createEffect, createResource } from "solid-js"
+import { createEffect, createResource, onMount } from "solid-js"
 import { ReadCSVResponse } from "../../types/csv"
 import { createStore } from "solid-js/store"
 import Handsontable from "handsontable"
@@ -15,36 +15,34 @@ async function openCSV(start = 0, end = 1000) {
 
 export default function Sheet() {
   const [csvStore, setCSVStore] = createStore<Partial<ReadCSVResponse>>()
-  const [range, setRange] = createStore({ start: 0, end: 10 })
-  const [data, { refetch }] = createResource(getCSV)
+  const [range, setRange] = createStore({ start: 0, end: 1000 })
+  const [data] = createResource(getCSV)
 
-  async function getCSV() {
-    return openCSV(range.start, range.end)
-  }
-
-  createEffect(() => {
-    const readData = data()
-    if (readData) setCSVStore(readData)
+  const hyperformulaInstance = HyperFormula.buildEmpty({
+    licenseKey: "gpl-v3"
   })
 
-  createEffect(
-    (prevRange) => {
-      if (prevRange !== range) refetch()
-    },
-    [range]
-  )
+  let handsontable: Handsontable
 
-  createEffect(() => {
-    if ((csvStore.data, csvStore.headers)) {
+  async function getCSV() {
+    const csvdata = await openCSV(range.start, range.end)
+    return csvdata
+  }
+
+  async function getMoreRows() {
+    const newRange = { start: range.end, end: range.end + 1000 }
+    const newCSVData = await openCSV(newRange.start, newRange.end)
+    setCSVStore("data", csvStore.data?.concat(newCSVData.data))
+    setRange(newRange)
+  }
+
+  onMount(() => {
+    getCSV().then((csvdata) => {
       const container = document.querySelector("#sheet")
-      const hyperformulaInstance = HyperFormula.buildEmpty({
-        licenseKey: "gpl-v3"
-      })
-
-      new Handsontable(container!, {
-        data: [...csvStore.data!],
+      handsontable = new Handsontable(container!, {
+        data: csvdata.data,
+        colHeaders: csvdata.headers as string[],
         rowHeaders: true,
-        colHeaders: csvStore.headers as string[],
         contextMenu: true,
         multiColumnSorting: true,
         filters: true,
@@ -56,7 +54,7 @@ export default function Sheet() {
         formulas: {
           engine: hyperformulaInstance
         },
-        height: "100vh",
+        height: "95vh",
         licenseKey: "non-commercial-and-evaluation",
         afterChange: (changes, source) => {
           if (source === "loadData") {
@@ -70,10 +68,26 @@ export default function Sheet() {
           })
         }
       })
+      setCSVStore(csvdata)
+    })
+  })
+
+  // createEffect(() => {
+  //   const readData = data()
+  //   if (readData) setCSVStore(readData)
+  // })
+
+  createEffect(() => {
+    if (csvStore.data) {
+      handsontable.updateData([...csvStore.data!])
+      // handsontable.updateSettings({ colHeaders: csvStore.headers as string[] })
     }
   })
 
-  createEffect(() => console.log(csvStore.data))
-
-  return <div id="sheet" style={{ height: "100vh" }}></div>
+  return (
+    <>
+      <div id="sheet" style={{ height: "100vh" }}></div>
+      <button onclick={getMoreRows}>Add more rows</button>
+    </>
+  )
 }

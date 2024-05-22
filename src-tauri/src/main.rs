@@ -50,8 +50,6 @@ fn read_csv(start: i32, end: i32) -> Value {
 
         let path = path.unwrap();
 
-        print!("{}", path.display());
-
         let mut reader = csv::Reader::from_path(path).unwrap();
         let headers = reader.headers().unwrap().clone();
 
@@ -78,10 +76,11 @@ fn read_csv(start: i32, end: i32) -> Value {
         );
     } else {
         json = unsafe { CSV_DATA.clone().unwrap() };
+        println!("loading from cache");
     }
 
     save_csv_data(json.clone());
-    print!("{}", json["data"].as_array().unwrap().len());
+    // print!("{}", json["data"].as_array().unwrap().len());
 
     // filter data
     let data = json["data"].as_array_mut().unwrap();
@@ -91,6 +90,7 @@ fn read_csv(start: i32, end: i32) -> Value {
     }
 
     json["data"] = Value::Array(new_data);
+    println!("Sent off");
 
     return json;
 }
